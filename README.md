@@ -87,8 +87,11 @@ A Host Backdrop uses Desktop Backdrop  as the background visual and also capture
 You can adjust the backdrop source in this example using `BackdropSource` enum.
 
   ```
-	compositor->SetAcrylicEffect(hwnd, AcrylicCompositor::BACKDROP_SOURCE_HOSTBACKDROP, param);  // For Host Backdrop
-	compositor->SetAcrylicEffect(hwnd, AcrylicCompositor::BACKDROP_SOURCE_DESKTOP , param);      // For Desktop Backdrop
+  	// For Host Backdrop
+	compositor->SetAcrylicEffect(hwnd, AcrylicCompositor::BACKDROP_SOURCE_HOSTBACKDROP, param);  
+	
+	// For Desktop Backdrop
+	compositor->SetAcrylicEffect(hwnd, AcrylicCompositor::BACKDROP_SOURCE_DESKTOP , param);     
   ```
   
 ## Features
