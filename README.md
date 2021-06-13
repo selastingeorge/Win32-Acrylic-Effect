@@ -42,7 +42,7 @@ A Demonstration of Acrylic Effect on C++ Win32 applications using Direct Composi
 
 ## Overview
 
-
+![sample](https://user-images.githubusercontent.com/72641365/121798817-2d04d300-cc46-11eb-845b-0f2863d7cfde.png)
 
 ### A Short History
 The Windows 10 Acrylic Effects was first introduced on UWP Apps after the Windows Fall Creators Update on 2017, Since Then Developers were trying to implement the acrylic effect on normal Windows Applications such as WPF, Win32 etc.The most Commonly used method was `SetWindowCompositionAttribute()`, but it didn't last long, from Windows 10 1903 the window starts to become laggy while dragging *(This issue seems to be fixed in windows insider previews but not on any stable versions of windows)*.  
