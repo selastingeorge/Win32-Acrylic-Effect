@@ -282,6 +282,9 @@ bool AcrylicCompositor::Sync(HWND hwnd, int msg, WPARAM wParam, LPARAM lParam,bo
 		case WM_WINDOWPOSCHANGED:
 			SyncCoordinates(hwnd);
 			return true;
+		case WM_CLOSE:
+			free(hwndExclusionList);
+			return true;
 	}
 	return false;
 }
