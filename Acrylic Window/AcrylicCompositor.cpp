@@ -80,7 +80,7 @@ bool AcrylicCompositor::InitDwmApi()
 
 bool AcrylicCompositor::CreateCompositionDevice()
 {
-	if (D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0, D3D11_SDK_VERSION, d3d11Device.GetAddressOf(), nullptr, nullptr) != S_OK)
+	if (D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, NULL,D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0, D3D11_SDK_VERSION, d3d11Device.GetAddressOf(), nullptr, nullptr) != S_OK)
 	{
 		return false;
 	}
@@ -109,6 +109,7 @@ bool AcrylicCompositor::CreateCompositionDevice()
 	{
 		return false;
 	}
+
 	return true;
 }
 
@@ -126,7 +127,7 @@ bool AcrylicCompositor::CreateFallbackVisual()
 
 	d3d11Device.As(&dxgiDevice);
 
-	if (CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, __uuidof(dxgiFactory), reinterpret_cast<void**>(dxgiFactory.GetAddressOf())) != S_OK)
+	if (CreateDXGIFactory2(0, __uuidof(dxgiFactory), reinterpret_cast<void**>(dxgiFactory.GetAddressOf())) != S_OK)
 	{
 		return false;
 	}
@@ -263,8 +264,8 @@ void AcrylicCompositor::SyncCoordinates(HWND hwnd)
 	clip->SetTop((float)hostWindowRect.top);
 	clip->SetBottom((float)hostWindowRect.bottom);
 	rootVisual->SetClip(clip.Get());
-	translateTransform->SetOffsetX(-1 * (float)hostWindowRect.left - 8);
-	translateTransform->SetOffsetY(-1 * (float)hostWindowRect.top - 31);
+	translateTransform->SetOffsetX(-1 * (float)hostWindowRect.left - (GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER)));
+	translateTransform->SetOffsetY(-1 * (float)hostWindowRect.top - (GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CXPADDEDBORDER)));
 	rootVisual->SetTransform(translateTransform.Get());
 	Commit();
 	DwmFlush();

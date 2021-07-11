@@ -146,6 +146,9 @@
     <ClCompile Include="Acrylic Window.cpp" />
     <ClCompile Include="AcrylicCompositor.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
