@@ -23,7 +23,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	ShowWindow(hwnd, nCmdShow);
 
-	compositor = new AcrylicCompositor(hwnd);
+	compositor.reset(new AcrylicCompositor(hwnd));
 
 	AcrylicCompositor::AcrylicEffectParameter param;
 	param.blurAmount = 40;

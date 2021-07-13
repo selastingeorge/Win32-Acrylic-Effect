@@ -283,7 +283,7 @@ bool AcrylicCompositor::Sync(HWND hwnd, int msg, WPARAM wParam, LPARAM lParam,bo
 			SyncCoordinates(hwnd);
 			return true;
 		case WM_CLOSE:
-			free(hwndExclusionList);
+			delete[] hwndExclusionList;
 			return true;
 	}
 	return false;
