@@ -27,7 +27,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	AcrylicCompositor::AcrylicEffectParameter param;
 	param.blurAmount = 40;
-	param.saturationAmount = 1;
+	param.saturationAmount = 2;
 	param.tintColor = D2D1::ColorF(0.0f, 0.0f, 0.0f, .30f);
 	param.fallbackColor = D2D1::ColorF(0.10f,0.10f,0.10f,1.0f);
 
