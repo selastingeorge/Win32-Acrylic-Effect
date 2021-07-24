@@ -102,12 +102,11 @@ compositor->SetAcrylicEffect(hwnd, AcrylicCompositor::BACKDROP_SOURCE_DESKTOP , 
   
 ## Known Limitations
 <ul>
-  <li>Currently supported only on 64 bit Windows 10.</li>
   <li>Sometimes the Desktop icons are missing in the acrylic effect.</li>
   <li>There is no straight way to implement this in WPF or Win UI3.</li>
   <li>Airspace Issue : Currently you can only use Direct Composition to draw something on top of acrylic effect.</li>
   <li>Realtime Acrylic not supported, which means the host window redraw acrylic only when it is activated so fallback color is used.</li>
-  <li>Exclusion Blending and Noise effect not added (Can be implemented, Pull requests are welcome)</li>
+  <li>Exclusion Blending and Noise effect not added (Can be implemented)</li>
 </ul>
 
 ## Supported Versions
