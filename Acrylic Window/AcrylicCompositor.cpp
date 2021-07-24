@@ -2,7 +2,7 @@
 
 AcrylicCompositor::AcrylicCompositor(HWND hwnd)
 {
-	InitDwmApi();
+	InitLibs();
 	CreateCompositionDevice();
 	CreateEffectGraph(dcompDevice3);
 }
@@ -59,22 +59,40 @@ bool AcrylicCompositor::SetAcrylicEffect(HWND hwnd, BackdropSource source, Acryl
 	return true;
 }
 
-bool AcrylicCompositor::InitDwmApi()
+long AcrylicCompositor::GetBuildVersion()
+{
+	if (GetVersionInfo != nullptr)
+	{
+		RTL_OSVERSIONINFOW versionInfo = { 0 };
+		versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+		if (GetVersionInfo(&versionInfo) == 0x00000000)
+		{
+			return versionInfo.dwBuildNumber;
+		}
+	}
+	return 0;
+}
+
+bool AcrylicCompositor::InitLibs()
 {
 	auto dwmapi = LoadLibrary(L"dwmapi.dll");
 	auto user32 = LoadLibrary(L"user32.dll");
+	auto ntdll = GetModuleHandleW(L"ntdll.dll");
 
-	if (!dwmapi || !user32)
+	if (!dwmapi || !user32 || !ntdll)
 	{
 		return false;
 	}
 
+	GetVersionInfo = (RtlGetVersionPtr)GetProcAddress(ntdll, "RtlGetVersion");
 	DwmSetWindowCompositionAttribute = (SetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
 	DwmCreateSharedThumbnailVisual = (DwmpCreateSharedThumbnailVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(147));
 	DwmQueryWindowThumbnailSourceSize = (DwmpQueryWindowThumbnailSourceSize)GetProcAddress(dwmapi, MAKEINTRESOURCEA(162));
 	DwmCreateSharedMultiWindowVisual = (DwmpCreateSharedMultiWindowVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(163));
 	DwmUpdateSharedMultiWindowVisual = (DwmpUpdateSharedMultiWindowVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(164));
-	
+	DwmCreateSharedVirtualDesktopVisual = (DwmpCreateSharedVirtualDesktopVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(163));
+	DwmUpdateSharedVirtualDesktopVisual = (DwmpUpdateSharedVirtualDesktopVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(164));
+
 	return true;
 }
 
@@ -220,13 +238,32 @@ bool AcrylicCompositor::CreateBackdrop(HWND hwnd,BackdropSource source)
 			}
 			break;
 		case BACKDROP_SOURCE_HOSTBACKDROP:
-			if (!CreateBackdrop(hwnd, BACKDROP_SOURCE_DESKTOP) || DwmCreateSharedMultiWindowVisual(hwnd, dcompDevice.Get(), (void**)topLevelWindowVisual.GetAddressOf(), &topLevelWindowThumbnail) != S_OK)
+			if (GetBuildVersion() >= 20000)
+			{
+				hr = DwmCreateSharedMultiWindowVisual(hwnd, dcompDevice.Get(), (void**)topLevelWindowVisual.GetAddressOf(), &topLevelWindowThumbnail);
+			}
+			else
+			{
+				hr = DwmCreateSharedVirtualDesktopVisual(hwnd, dcompDevice.Get(), (void**)topLevelWindowVisual.GetAddressOf(), &topLevelWindowThumbnail);
+			}
+
+			if (!CreateBackdrop(hwnd, BACKDROP_SOURCE_DESKTOP) || hr != S_OK)
 			{
 				return false;
 			}
 			hwndExclusionList = new HWND[1];
 			hwndExclusionList[0] = (HWND)0x0;
-			if (DwmUpdateSharedMultiWindowVisual(topLevelWindowThumbnail, NULL, 0, hwndExclusionList, 1, &sourceRect, &destinationSize, 1) != S_OK)
+
+			if (GetBuildVersion() >= 20000)
+			{
+				hr = DwmUpdateSharedMultiWindowVisual(topLevelWindowThumbnail, NULL, 0, hwndExclusionList, 1, &sourceRect, &destinationSize, 1);
+			}
+			else
+			{
+				hr = DwmUpdateSharedVirtualDesktopVisual(topLevelWindowThumbnail, NULL, 0, hwndExclusionList, 1, &sourceRect, &destinationSize);
+			}
+
+			if (hr != S_OK)
 			{
 				return false;
 			}
@@ -293,10 +330,17 @@ bool AcrylicCompositor::Flush()
 {
 	if (topLevelWindowThumbnail !=NULL)
 	{
-		DwmUpdateSharedMultiWindowVisual(topLevelWindowThumbnail, NULL, 0, hwndExclusionList, 1, &sourceRect, &destinationSize, 1);
+		if (GetBuildVersion() >= 20000)
+		{
+			DwmUpdateSharedMultiWindowVisual(topLevelWindowThumbnail, NULL, 0, hwndExclusionList, 1, &sourceRect, &destinationSize, 1);
+		}
+		else
+		{
+			DwmUpdateSharedVirtualDesktopVisual(topLevelWindowThumbnail, NULL, 0, hwndExclusionList, 1, &sourceRect, &destinationSize);
+		}
 		DwmFlush();
 	}
-	return false;
+	return true;
 }
 
 bool AcrylicCompositor::Commit()

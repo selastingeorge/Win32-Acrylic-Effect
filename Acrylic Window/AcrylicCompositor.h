@@ -20,7 +20,6 @@
 #define DWM_TNP_FORCECVI          0x40000000
 #define DWM_TNP_DISABLEFORCECVI   0x80000000
 
-
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d2d1")
@@ -89,8 +88,6 @@ class AcrylicCompositor
 			DWORD cbData;
 		};
 
-
-
 		ComPtr<ID2D1Device1> d2Device;
 		ComPtr<ID3D11Device> d3d11Device;
 		ComPtr<IDXGIDevice2> dxgiDevice;
@@ -147,21 +144,30 @@ class AcrylicCompositor
 
 		#pragma endregion
 
+		typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 		typedef BOOL(WINAPI* SetWindowCompositionAttribute)(IN HWND hwnd,IN WINDOWCOMPOSITIONATTRIBDATA* pwcad);
 		typedef HRESULT(WINAPI* DwmpCreateSharedThumbnailVisual)(IN HWND hwndDestination,IN HWND hwndSource,IN DWORD dwThumbnailFlags,IN DWM_THUMBNAIL_PROPERTIES* pThumbnailProperties,IN VOID* pDCompDevice,OUT VOID** ppVisual,OUT PHTHUMBNAIL phThumbnailId);
 		typedef HRESULT(WINAPI* DwmpQueryWindowThumbnailSourceSize)(IN HWND hwndSource,IN BOOL fSourceClientAreaOnly,OUT SIZE* pSize);
 		typedef HRESULT(WINAPI* DwmpCreateSharedMultiWindowVisual)(IN HWND hwndDestination,IN VOID* pDCompDevice,OUT VOID** ppVisual,OUT PHTHUMBNAIL phThumbnailId);
 		typedef HRESULT(WINAPI* DwmpUpdateSharedMultiWindowVisual)(IN HTHUMBNAIL hThumbnailId,IN HWND* phwndsInclude,IN DWORD chwndsInclude,IN HWND* phwndsExclude,IN DWORD chwndsExclude,OUT RECT* prcSource,OUT SIZE* pDestinationSize,IN DWORD dwFlags);
+		typedef HRESULT(WINAPI* DwmpCreateSharedVirtualDesktopVisual)(IN HWND hwndDestination,IN VOID* pDCompDevice,OUT VOID** ppVisual,OUT PHTHUMBNAIL phThumbnailId);
+		typedef HRESULT(WINAPI* DwmpUpdateSharedVirtualDesktopVisual)(IN HTHUMBNAIL hThumbnailId,IN HWND* phwndsInclude,IN DWORD chwndsInclude,IN HWND* phwndsExclude,IN DWORD chwndsExclude,OUT RECT* prcSource,OUT SIZE* pDestinationSize);
 
 		DwmpCreateSharedThumbnailVisual DwmCreateSharedThumbnailVisual;
 		DwmpQueryWindowThumbnailSourceSize DwmQueryWindowThumbnailSourceSize;
 		DwmpCreateSharedMultiWindowVisual DwmCreateSharedMultiWindowVisual;
 		DwmpUpdateSharedMultiWindowVisual DwmUpdateSharedMultiWindowVisual;
+		DwmpCreateSharedVirtualDesktopVisual DwmCreateSharedVirtualDesktopVisual;
+		DwmpUpdateSharedVirtualDesktopVisual DwmUpdateSharedVirtualDesktopVisual;
 		SetWindowCompositionAttribute DwmSetWindowCompositionAttribute;
+		RtlGetVersionPtr GetVersionInfo;
 
+
+		HRESULT hr;
 		RECT hostWindowRect{};
 
-		bool InitDwmApi();
+		bool InitLibs();
+		long GetBuildVersion();
 		bool CreateCompositionDevice();
 		bool CreateFallbackVisual();
 		void SyncFallbackVisual(bool active);
