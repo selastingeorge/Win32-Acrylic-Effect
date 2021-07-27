@@ -129,6 +129,7 @@ class AcrylicCompositor
 		#pragma region Desktop Backdrop
 
 		HWND desktopWindow;
+		RECT desktopWindowRect;
 		SIZE thumbnailSize{};
 		DWM_THUMBNAIL_PROPERTIES thumbnail;
 		HTHUMBNAIL desktopThumbnail = NULL;
@@ -147,14 +148,12 @@ class AcrylicCompositor
 		typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 		typedef BOOL(WINAPI* SetWindowCompositionAttribute)(IN HWND hwnd,IN WINDOWCOMPOSITIONATTRIBDATA* pwcad);
 		typedef HRESULT(WINAPI* DwmpCreateSharedThumbnailVisual)(IN HWND hwndDestination,IN HWND hwndSource,IN DWORD dwThumbnailFlags,IN DWM_THUMBNAIL_PROPERTIES* pThumbnailProperties,IN VOID* pDCompDevice,OUT VOID** ppVisual,OUT PHTHUMBNAIL phThumbnailId);
-		typedef HRESULT(WINAPI* DwmpQueryWindowThumbnailSourceSize)(IN HWND hwndSource,IN BOOL fSourceClientAreaOnly,OUT SIZE* pSize);
 		typedef HRESULT(WINAPI* DwmpCreateSharedMultiWindowVisual)(IN HWND hwndDestination,IN VOID* pDCompDevice,OUT VOID** ppVisual,OUT PHTHUMBNAIL phThumbnailId);
 		typedef HRESULT(WINAPI* DwmpUpdateSharedMultiWindowVisual)(IN HTHUMBNAIL hThumbnailId,IN HWND* phwndsInclude,IN DWORD chwndsInclude,IN HWND* phwndsExclude,IN DWORD chwndsExclude,OUT RECT* prcSource,OUT SIZE* pDestinationSize,IN DWORD dwFlags);
 		typedef HRESULT(WINAPI* DwmpCreateSharedVirtualDesktopVisual)(IN HWND hwndDestination,IN VOID* pDCompDevice,OUT VOID** ppVisual,OUT PHTHUMBNAIL phThumbnailId);
 		typedef HRESULT(WINAPI* DwmpUpdateSharedVirtualDesktopVisual)(IN HTHUMBNAIL hThumbnailId,IN HWND* phwndsInclude,IN DWORD chwndsInclude,IN HWND* phwndsExclude,IN DWORD chwndsExclude,OUT RECT* prcSource,OUT SIZE* pDestinationSize);
 
 		DwmpCreateSharedThumbnailVisual DwmCreateSharedThumbnailVisual;
-		DwmpQueryWindowThumbnailSourceSize DwmQueryWindowThumbnailSourceSize;
 		DwmpCreateSharedMultiWindowVisual DwmCreateSharedMultiWindowVisual;
 		DwmpUpdateSharedMultiWindowVisual DwmUpdateSharedMultiWindowVisual;
 		DwmpCreateSharedVirtualDesktopVisual DwmCreateSharedVirtualDesktopVisual;

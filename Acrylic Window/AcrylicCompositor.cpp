@@ -87,7 +87,6 @@ bool AcrylicCompositor::InitLibs()
 	GetVersionInfo = (RtlGetVersionPtr)GetProcAddress(ntdll, "RtlGetVersion");
 	DwmSetWindowCompositionAttribute = (SetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
 	DwmCreateSharedThumbnailVisual = (DwmpCreateSharedThumbnailVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(147));
-	DwmQueryWindowThumbnailSourceSize = (DwmpQueryWindowThumbnailSourceSize)GetProcAddress(dwmapi, MAKEINTRESOURCEA(162));
 	DwmCreateSharedMultiWindowVisual = (DwmpCreateSharedMultiWindowVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(163));
 	DwmUpdateSharedMultiWindowVisual = (DwmpUpdateSharedMultiWindowVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(164));
 	DwmCreateSharedVirtualDesktopVisual = (DwmpCreateSharedVirtualDesktopVisual)GetProcAddress(dwmapi, MAKEINTRESOURCEA(163));
@@ -222,10 +221,11 @@ bool AcrylicCompositor::CreateBackdrop(HWND hwnd,BackdropSource source)
 	{
 		case BACKDROP_SOURCE_DESKTOP:
 			desktopWindow = (HWND)FindWindow(L"Progman", NULL);
-			if (DwmQueryWindowThumbnailSourceSize(desktopWindow, FALSE, &thumbnailSize)!=S_OK)
-			{
-				return false;
-			}
+
+			GetWindowRect(desktopWindow, &desktopWindowRect);
+			thumbnailSize.cx = (desktopWindowRect.right - desktopWindowRect.left);
+			thumbnailSize.cy = (desktopWindowRect.bottom - desktopWindowRect.top);
+
 			thumbnail.dwFlags = DWM_TNP_SOURCECLIENTAREAONLY | DWM_TNP_VISIBLE | DWM_TNP_RECTDESTINATION | DWM_TNP_RECTSOURCE | DWM_TNP_OPACITY | DWM_TNP_ENABLE3D;
 			thumbnail.opacity = 255;
 			thumbnail.fVisible = TRUE;
